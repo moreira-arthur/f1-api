@@ -1,5 +1,6 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
+import { loadSQL } from '../functions/load-sql-file'
 
 export const helloRoute: FastifyPluginAsyncZod = async app => {
   app.get(
@@ -10,7 +11,8 @@ export const helloRoute: FastifyPluginAsyncZod = async app => {
       },
     },
     async (_, reply) => {
-      return reply.status(200).send('Hello F1')
+      const sql = loadSQL('create-user-table', 'tables')
+      return reply.status(200).send({ sql })
     }
   )
 }

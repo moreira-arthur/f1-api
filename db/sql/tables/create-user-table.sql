@@ -1,0 +1,11 @@
+CREATE TABLE USERS (
+    Userid SERIAL,
+    Login VARCHAR(100) NOT NULL,
+    Password TEXT NOT NULL,
+    Tipo VARCHAR(20) NOT NULL,
+    IdOriginal INTEGER,
+
+    CONSTRAINT USERS_PKEY PRIMARY KEY (Userid),
+    CONSTRAINT USERS_LOGIN_KEY UNIQUE (Login),
+    CONSTRAINT USERS_TIPO_CHECK CHECK (Tipo IN ('Administrador', 'Escuderia', 'Piloto'))
+);
