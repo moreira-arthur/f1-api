@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=postgresql # Senha para o superuser padrão (postgres)
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=fia
+    volumes:
+      - fia_pg_data:/bitnami/postgresql
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=arthur.moreira@usp.br
+      - PGADMIN_DEFAULT_PASSWORD=arthur
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+volumes:
+  fia_pg_data:
