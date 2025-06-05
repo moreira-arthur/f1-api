@@ -4,9 +4,3 @@
 
 #Dependecies
 node_modules
-
-#Database
-db/*.db
-
-#Build
-build
