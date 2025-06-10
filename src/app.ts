@@ -1,4 +1,5 @@
 import fastifyCors from '@fastify/cors'
+import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
 import fastify from 'fastify'
@@ -7,15 +8,22 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
+import { env } from './env'
+import { constructorRoute } from './routes/constructor-routes'
+import { dashboardAdminRoute } from './routes/dashboard-admin-route'
+import { dashboardConstructorRoute } from './routes/dashboard-constructor-route'
+import { dashboardDriverRoute } from './routes/dashboard-driver-route'
 import { driverRoute } from './routes/driver-routes'
 import { helloRoute } from './routes/hello-route'
 import { loginRoute } from './routes/login-route'
+import { logoutRoute } from './routes/logout-route'
 
 export const app = fastify()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
+app.register(fastifyJwt, { secret: env.SECRET })
 app.register(fastifyCors)
 
 app.register(fastifySwagger, {
@@ -40,4 +48,21 @@ app.register(driverRoute, {
 })
 app.register(loginRoute, {
   prefix: 'login',
+})
+app.register(logoutRoute, {
+  prefix: 'logout',
+})
+
+app.register(constructorRoute, {
+  prefix: 'constructor',
+})
+
+app.register(dashboardDriverRoute, {
+  prefix: 'dashboard/driver',
+})
+app.register(dashboardConstructorRoute, {
+  prefix: 'dashboard/constructor',
+})
+app.register(dashboardAdminRoute, {
+  prefix: 'dashboard/admin',
 })
