@@ -17,6 +17,7 @@ import { driverRoute } from './routes/driver-routes'
 import { helloRoute } from './routes/hello-route'
 import { loginRoute } from './routes/login-route'
 import { logoutRoute } from './routes/logout-route'
+import { reportsRoute } from './routes/reports-routes'
 
 export const app = fastify()
 
@@ -28,11 +29,25 @@ app.register(fastifyCors)
 
 app.register(fastifySwagger, {
   openapi: {
+    openapi: '3.0.0',
     info: {
       title: 'F1 Stats Api',
-      version: '0.1',
+      version: '0.2',
+    },
+    servers: [
+      { url: 'http://localhost:3333', description: 'Development server' },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
     },
   },
+
   transform: jsonSchemaTransform,
 })
 
@@ -65,4 +80,7 @@ app.register(dashboardConstructorRoute, {
 })
 app.register(dashboardAdminRoute, {
   prefix: 'dashboard/admin',
+})
+app.register(reportsRoute, {
+  prefix: 'reports',
 })

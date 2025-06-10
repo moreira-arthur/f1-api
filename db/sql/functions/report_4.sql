@@ -1,4 +1,3 @@
-set search_path to f1;
 -- Este índice otimiza a busca por um construtor específico
 -- e a filtragem por posição (para encontrar as vitórias).
 CREATE INDEX IF NOT EXISTS idx_results_constructor_position

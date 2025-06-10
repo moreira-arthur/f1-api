@@ -1,5 +1,3 @@
-SET search_path to f1;
-
 -- Índice 1: Otimização geoespacial para a tabela AIRPORTS
 -- Usa o método GIST para indexar as coordenadas da Terra.
 CREATE INDEX idx_airports_location ON AIRPORTS USING GIST (ll_to_earth(latitudedeg, longitudedeg));

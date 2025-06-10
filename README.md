@@ -23,3 +23,6 @@ Run the next command line:
 ```
 npm run dev
 ```
+
+## Access the following url to see the documentation
+Visit this link for the [Documentation](http://localhost:3333/docs)
