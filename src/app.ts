@@ -1,5 +1,6 @@
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
+import fastifyMultipart from '@fastify/multipart'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
 import fastify from 'fastify'
@@ -26,6 +27,7 @@ app.setValidatorCompiler(validatorCompiler)
 
 app.register(fastifyJwt, { secret: env.SECRET })
 app.register(fastifyCors)
+app.register(fastifyMultipart)
 
 app.register(fastifySwagger, {
   openapi: {
