@@ -9,6 +9,7 @@ declare module '@fastify/jwt' {
     payload: {
       userId: number // ou o tipo do seu ID
       tipo: string
+      idOriginal: number
     }
     // E aqui você define o formato final de request.user
     user: {

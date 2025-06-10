@@ -35,7 +35,11 @@ export const loginRoute: FastifyPluginAsyncZod = async app => {
           return reply.code(401).send({ error: 'Credenciais inválidas.' })
         }
 
-        const payload = { userId: loggedUser.userid, tipo: loggedUser.tipo }
+        const payload = {
+          userId: loggedUser.userid,
+          tipo: loggedUser.tipo,
+          idOriginal: loggedUser.idoriginal,
+        }
         console.log(payload)
         const token = app.jwt.sign(payload, { expiresIn: '1h' })
 
