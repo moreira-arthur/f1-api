@@ -40,7 +40,7 @@ export const loginRoute: FastifyPluginAsyncZod = async app => {
           tipo: loggedUser.tipo,
           idOriginal: loggedUser.idoriginal,
         }
-        console.log(payload)
+        // console.log(payload)
         const token = app.jwt.sign(payload, { expiresIn: '1h' })
 
         await log({ userId: loggedUser.userid, activityType: 'LOGIN' })
