@@ -1,4 +1,3 @@
--- SET search_path TO F1;
 -- Table: SEASONS
 CREATE TABLE SEASONS (
     Year SMALLINT,              -- Years between 1974 and 2010 (SMALLINT supports up to 32767)
@@ -219,46 +218,3 @@ CREATE TABLE RESULTS (
     CONSTRAINT CONSTRUCTORID_FK_RESULTS FOREIGN KEY (ConstructorId) REFERENCES CONSTRUCTORS(ConstructorID),
     CONSTRAINT STATUSID_FK_RESULTS FOREIGN KEY (StatusId) REFERENCES STATUS(StatusId)
 );
-
--- Feeding data into tables
-\copy seasons (year, url) FROM 'db/data/seasons.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''');
--- Inserted 75 records into the 'seasons' table.
-
-\copy status (statusid, status) FROM 'db/data/status.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''');
--- Inserted 139 records into the 'status' table.
-
-\copy circuits (circuitid, circuitref, name, location, country, lat, lng, alt, url) FROM 'db/data/circuits.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''');
--- Inserted 77 records into the 'circuits' table.
-
-\copy constructors (constructorid, constructorref, name, nationality, url) FROM 'db/data/constructors.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''');
--- Inserted 212 records into the 'constructors' table.
-
-\copy driver (driverid, driverref, number, code, forename, surname, dateofbirth, nationality, url) FROM 'db/data/drivers.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 861 records into the 'driver' table.
-
-\copy races (raceid, year, round, circuitid, name, date, time, url, fp1date, fp1time, fp2date, fp2time, fp3date, fp3time, qualidate, qualitime, sprintdate, sprinttime) FROM 'db/data/races.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 1125 records into the 'races' table.
-
-\copy qualifying (qualifyid, raceid, driverid, constructorid, number, position, q1, q2, q3) FROM 'db/data/qualifying.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 10494 records into the 'qualifying' table.
-
-\copy results (resultid, raceid, driverid, constructorid, number, grid, position, positiontext, positionorder, points, laps, time, milliseconds, fastestlap, ranking, fastestlaptime, fastestlapspeed, statusid) FROM 'db/data/results.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 26759 records into the 'results' table.
-
-\copy laptimes (raceid, driverid, lap, position, time, milliseconds) FROM 'db/data/lap_Times.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 589081 records into the 'laptimes' table.
-
-\copy driverstandings (driverstandingsid, raceid, driverid, points, position, positiontext, wins) FROM 'db/data/driver_Standings.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 34863 records into the 'driverstandings' table.
-
-\copy pitstops (raceid, driverid, stop, lap, time, duration, milliseconds) FROM 'db/data/pit_Stops.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 11371 records into the 'pitstops' table.
-
-\copy countries (id, code, name, continent, wikipedialink, keywords) FROM 'db/data/countries.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', ESCAPE '''', NULL E'\\N');
--- Inserted 249 records into the 'countries' table.
-
-\copy airports (id, ident, type, name, latitudedeg, longitudedeg, elevationft, continent, isocountry, isoregion, municipality, scheduledservice, icaocode, iatacode, gpscode, localcode, homelink, wikipedialink, keywords) FROM 'db/data/airports.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8', QUOTE '"', NULL '');
--- Inserted 82796 records into the 'airports' table.
-
-\copy geocities15k (geonameid, name, asciiname, alternatenames, lat, long, featureclass, featurecode, country, cc2, admin1code, admin2code, admin3code, admin4code, population, elevation, dem, timezone, modificationdate) FROM 'db/data/cities15000.txt' WITH (FORMAT text, DELIMITER E'\t', ENCODING 'UTF8', NULL '');
--- Inserted 29835 records into the 'geocities15k' table.

@@ -26,6 +26,7 @@
     "@fastify/multipart": "^9.0.3",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
+    "csv-parser": "^3.2.0",
     "dotenv": "^16.5.0",
     "fastify": "^5.3.3",
     "fastify-plugin": "^5.0.1",

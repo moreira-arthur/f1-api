@@ -268,7 +268,6 @@ export const driverRoute: FastifyPluginAsyncZod = async app => {
 
         // Chama a função que interage com o banco de dados
         const drivers = await getDriverByForename({ forename, constructorName })
-        console.log(drivers)
 
         // A função retorna `null` se houver um erro de banco de dados
         if (drivers === null) {
