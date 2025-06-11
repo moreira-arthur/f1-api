@@ -84,9 +84,8 @@ export const driverRoute: FastifyPluginAsyncZod = async app => {
   )
 
   app.post(
-    '/upload-stream', // Criei um novo endpoint para não conflitar com o anterior
+    '/upload-stream',
     {
-      // preHandler: [authenticateHook],
       schema: {
         summary:
           'Cadastra múltiplos pilotos via stream a partir de um arquivo CSV',
@@ -117,81 +116,81 @@ export const driverRoute: FastifyPluginAsyncZod = async app => {
       let errorCount = 0
       const duplicates: string[] = []
       const errors: string[] = []
-
-      // Variável para guardar o pedaço de linha que sobrou do chunk anterior
       let leftover = ''
 
-      try {
-        // Usamos 'for await...of' para consumir o stream de forma assíncrona
-        // Isso processa o arquivo chunk por chunk, sem estourar a memória
-        for await (const chunk of file.file) {
-          const chunkStr = leftover + chunk.toString('utf-8')
-          const lines = chunkStr.split('\n')
+      // 1. Definimos uma função auxiliar para processar cada linha
+      //    Isso evita repetir o mesmo código para a última linha.
+      const processLine = async (line: string) => {
+        if (line.trim() === '') return
 
-          // O último item do array pode ser uma linha incompleta, guardamos para o próximo chunk
-          leftover = lines.pop() || ''
+        const fields = line.split(',').map(field => field.trim())
 
-          for (const line of lines) {
-            if (line.trim() === '') continue
+        if (fields.length < 7) {
+          errorCount++
+          errors.push(`Linha com formato inválido: ${line}`)
+          return
+        }
 
-            const fields = line.split(',').map(field => field.trim())
+        const [
+          driverRef,
+          numberStr,
+          code,
+          forename,
+          surname,
+          dob,
+          nationality,
+          url,
+        ] = fields
+        const fullName = `${forename} ${surname}`
 
-            // Verificação de formato básico da linha
-            if (fields.length < 7) {
-              errorCount++
-              errors.push(`Linha com formato inválido: ${line}`)
-              continue
-            }
-
-            const [
+        try {
+          const result = await knex.raw(
+            'SELECT * FROM add_driver_if_not_exists(?, ?, ?, ?, ?, ?, ?, ?)',
+            [
               driverRef,
-              numberStr,
-              code,
+              numberStr && numberStr !== ''
+                ? Number.parseInt(numberStr, 10)
+                : null,
+              code || null,
               forename,
               surname,
               dob,
               nationality,
-              url,
-            ] = fields
-            const fullName = `${forename} ${surname}`
+              url || null,
+            ]
+          )
 
-            try {
-              const result = await knex.raw(
-                'SELECT * FROM add_driver_if_not_exists(?, ?, ?, ?, ?, ?, ?, ?)',
-                [
-                  driverRef,
-                  numberStr && numberStr !== ''
-                    ? Number.parseInt(numberStr, 10)
-                    : null,
-                  code || null,
-                  forename,
-                  surname,
-                  dob,
-                  nationality,
-                  url || null,
-                ]
-              )
+          const status = result.rows[0]?.add_driver_if_not_exists
+          if (status === 'INSERTED') {
+            insertedCount++
+          } else if (status === 'DUPLICATE') {
+            duplicateCount++
+            duplicates.push(fullName)
+          }
+        } catch (dbError) {
+          errorCount++
+          errors.push(`Erro no banco para a linha: ${line}`)
+          app.log.error(dbError, `Falha ao processar a linha: ${line}`)
+        }
+      }
 
-              const status = result.rows[0]?.add_driver_if_not_exists
+      try {
+        for await (const chunk of file.file) {
+          const chunkStr = leftover + chunk.toString('utf-8')
+          const lines = chunkStr.split('\n')
+          leftover = lines.pop() || ''
 
-              if (status === 'INSERTED') {
-                insertedCount++
-              } else if (status === 'DUPLICATE') {
-                duplicateCount++
-                duplicates.push(fullName)
-              }
-            } catch (dbError) {
-              errorCount++
-              errors.push(`Erro no banco para a linha: ${line}`)
-              app.log.error(dbError, `Falha ao processar a linha: ${line}`)
-            }
+          // 2. O loop principal agora é muito mais limpo
+          for (const line of lines) {
+            await processLine(line)
           }
         }
 
-        // Se sobrou algum texto após o loop (arquivo não termina com \n), processe-o
+        // 3. AQUI ESTÁ A CORREÇÃO: Processamos o conteúdo final de 'leftover'
+        //    que sobrou após o último chunk do arquivo ser lido.
         if (leftover.trim() !== '') {
-          // ... (aqui você poderia duplicar a lógica de processamento de linha para o 'leftover')
-          // Mas para simplicidade, vamos assumir que o arquivo termina com uma nova linha.
+          app.log.info(`Processando a última linha restante: ${leftover}`)
+          await processLine(leftover)
         }
 
         return reply.code(200).send({
